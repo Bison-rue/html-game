@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Guessing Game</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+        body {
+            font-family: 'Press Start 2P', cursive;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #1a1a1a;
+            color: #fff;
+            text-align: center;
+        }
+        #colorBox {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 20px;
+            border: 4px solid #444;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+        }
+        .color-option {
+            width: 120px;
+            height: 50px;
+            margin: 8px;
+            border: 2px solid #444;
+            cursor: pointer;
+            font-size: 14px;
+            font-family: 'Press Start 2P', cursive;
+            transition: transform 0.2s ease-in-out;
+        }
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+        button {
+            background-color: #ffcc00;
+            border: 2px solid #444;
+            padding: 10px 20px;
+            margin-top: 20px;
+            font-size: 16px;
+            font-family: 'Press Start 2P', cursive;
+            cursor: pointer;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s;
+        }
+        button:hover {
+            background-color: #ffaa00;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <h1 data-testid="gameInstructions">Guess the correct color!</h1>
+    <div id="colorBox" data-testid="colorBox"></div>
+    <div id="colorOptions"></div>
+    <p id="gameStatus" data-testid="gameStatus"></p>
+    <p>Score: <span id="score" data-testid="score">0</span></p>
+    <button id="newGameButton" data-testid="newGameButton">New Game</button>
+    
+    <audio id="correctSound" src="correct answer audio.mp3"></audio>
+    <audio id="wrongSound" src="wrong-answer audio.mp3"></audio>
+
+    <script>
+        const colors = ["red", "blue", "green", "yellow", "purple", "orange"];
+        let score = 0;
+        let correctColor = "";
+
+        function startGame() {
+            correctColor = colors[Math.floor(Math.random() * colors.length)];
+            document.getElementById("colorBox").style.backgroundColor = correctColor;
+            document.getElementById("gameStatus").textContent = "";
+            generateColorOptions();
+        }
+
+        function generateColorOptions() {
+            const optionsContainer = document.getElementById("colorOptions");
+            optionsContainer.innerHTML = "";
+            colors.forEach(color => {
+                const button = document.createElement("button");
+                button.className = "color-option";
+                button.style.backgroundColor = color;
+                button.setAttribute("data-testid", "colorOption");
+                button.addEventListener("click", () => checkGuess(color));
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        function checkGuess(selectedColor) {
+            const correctSound = document.getElementById("correctSound");
+            const wrongSound = document.getElementById("wrongSound");
+            if (selectedColor === correctColor) {
+                document.getElementById("gameStatus").textContent = "Correct!";
+                score++;
+                document.getElementById("score").textContent = score;
+                correctSound.play();
+            } else {
+                document.getElementById("gameStatus").textContent = "Wrong! Try again.";
+                wrongSound.play();
+            }
+        }
+
+        document.getElementById("newGameButton").addEventListener("click", startGame);
+        startGame();
+    </script>
+</body>
+</html>
